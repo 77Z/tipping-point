@@ -68,6 +68,64 @@ void move_forward() {
 	}
 }
 
+void move_backward() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		bot_left_wheel.move(-127);
+		top_left_wheel.move(-127);
+		bot_right_wheel.move(-127);
+		top_right_wheel.move(-127);
+	}
+}
+
+void rotate_left() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		bot_left_wheel.move(-127);
+		top_left_wheel.move(-127);
+		bot_right_wheel.move(127);
+		top_right_wheel.move(127);
+	}
+}
+
+void rotate_right() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		bot_left_wheel.move(127);
+		top_left_wheel.move(127);
+		bot_right_wheel.move(-127);
+		top_right_wheel.move(-127);
+	}
+}
+
+void claw_open() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		claw_motor.move(127);
+	}
+}
+
+void claw_close() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		claw_motor.move(-127);
+	}
+}
+
+void arm_up() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		arm_motor.move(127);
+	}
+}
+
+void arm_down() {
+	// This code is awful and i'm pretty sure it won't work
+	for (int i = 0; i < 10000; i++) {
+		arm_motor.move(-127);
+	}
+}
+
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -79,9 +137,86 @@ void move_forward() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {
-
-}
+//void autonomousLeft() {
+//	for (int i = 0; i < 80; i++) {
+//		arm_up();
+//	}
+//	for (int i = 0; i < 24; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 90; i++) {
+//		rotate_right();
+//	}
+//	for (int i = 0; i < 14; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 45; i++) {
+//		arm_down();
+//	}
+//	for (int i = 0; i < 7; i++) {
+//		claw_close();
+//	}
+//	//this has the robot grab a ring
+//	for (int i = 0; i < 115; i++) {
+//		arm_up();
+//	}
+//	for (int i = 0; i < 90; i++) {
+//		rotate_left();
+//	}
+//	for (int i = 0; i < 12; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 100; i++) {
+//		arm_down();
+//	}
+//	for (int i = 0; i < 7; i++) {
+//		claw_open();
+//	}
+//	for (int i = 0; i < 12; i++) {
+//		move_backward();
+//	}
+//	//this has the robote put a ring on a goal
+//}
+//void autonomousRight() {
+//	for (int i = 0; i < 80; i++) {
+//		arm_up();
+//	}
+//	for (int i = 0; i < 42; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 90; i++) {
+//		rotate_left();
+//	}
+//	for (int i = 0; i < 7; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 45; i++) {
+//		arm_down();
+//	}
+//	for (int i = 0; i < 7; i++) {
+//		claw_close();
+//	}
+//	//this has the robot grab a ring
+//	for (int i = 0; i < 115; i++) {
+//		arm_up();
+//	}
+//	for (int i = 0; i < 90; i++) {
+//		rotate_right();
+//	}
+//	for (int i = 0; i < 18; i++) {
+//		move_forward();
+//	}
+//	for (int i = 0; i < 100; i++) {
+//		arm_down();
+//	}
+//	for (int i = 0; i < 7; i++) {
+//		claw_open();
+//	}
+//	for (int i = 0; i < 12; i++) {
+//		move_backward();
+//	}
+//	//this has the robote put a ring on a goal
+//}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -142,7 +277,10 @@ void opcontrol() {
 		pros::lcd::set_text(4, cs);
 
 		if (master.get_digital(DIGITAL_B)) {
-			move_forward();
+			rotate_left();
+		}
+		if (master.get_digital(DIGITAL_A)) {
+			//autonomousRight();
 		}
 
 		// Arm
