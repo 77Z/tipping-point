@@ -35,7 +35,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "hahahahhahahaha");
+	pros::lcd::set_text(1, "ben sucks");
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -268,7 +268,7 @@ void opcontrol() {
 
 		int clawvolt = claw_motor.get_voltage();
 
-
+        //Ben was here3
 		// Display debug text on screeeen
 		std::stringstream sss;
 		sss << clawvolt;
