@@ -3,13 +3,14 @@
 #include <sstream>
 #include <iostream>
 
-pros::Motor arm_motor(ARM_MOTOR_PORT);
+/*pros::Motor arm_motor(ARM_MOTOR_PORT);
 pros::Motor claw_motor(CLAW_MOTOR_PORT);
 
 pros::Motor bot_left_wheel(BOT_LEFT_WEEL_PORT);
 pros::Motor top_left_wheel(TOP_LEFT_WEEL_PORT);
 pros::Motor bot_right_wheel(BOT_RIGHT_WEEL_PORT, true); // This reverses the motor
 pros::Motor top_right_wheel(TOP_RIGHT_WEEL_PORT, true);
+*/
 
 /**
  * A callback function for LLEMU's center button.
@@ -58,7 +59,7 @@ void disabled() {}
  */
 void competition_initialize() {}
 
-void move_forward() {
+/*void move_forward() {
 	// This code is awful and i'm pretty sure it won't work
 	for (int i = 0; i < 10000; i++) {
 		bot_left_wheel.move(127);
@@ -98,20 +99,6 @@ void rotate_right() {
 	}
 }
 
-void claw_open() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		claw_motor.move(127);
-	}
-}
-
-void claw_close() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		claw_motor.move(-127);
-	}
-}
-
 void arm_up() {
 	// This code is awful and i'm pretty sure it won't work
 	for (int i = 0; i < 10000; i++) {
@@ -124,7 +111,7 @@ void arm_down() {
 	for (int i = 0; i < 10000; i++) {
 		arm_motor.move(-127);
 	}
-}
+}*/
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -218,6 +205,20 @@ void arm_down() {
 //	//this has the robote put a ring on a goal
 //}
 
+
+pros::ADIButton goalGrabberLimitSwitchUno('A');
+pros::ADIButton goalGrabberLimitSwitchDos('B');
+pros::Motor goalGrabberMotor(GOAL_GRABBER_PORT);
+
+int isUp = 1;
+
+void toggleArm() {
+	while(!goalGrabberLimitSwitchUno.isPressed() || !goalGrabberLimitSwitchDos.isPressed()) {
+		goalGrabberMotor.move_voltage(12000);
+	}
+}
+
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -232,78 +233,16 @@ void arm_down() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	// Default Code LMAO
-	// pros::Controller master(pros::E_CONTROLLER_MASTER);
-	// pros::Motor left_mtr(1);
-	// pros::Motor right_mtr(2);
 
-	// while (true) {
-	// 	pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-	// 	                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-	// 	                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-	// 	int left = master.get_analog(ANALOG_LEFT_Y);
-	// 	int right = master.get_analog(ANALOG_RIGHT_Y);
 
-	// 	left_mtr = left;
-	// 	right_mtr = right;
-	// 	pros::delay(20);
-	// }
-
-	pros::Controller master (CONTROLLER_MASTER);
+	pros::Motor left_wheels(LEFT_WHEELS_PORT);
+	pros::Motor right_wheels(RIGHT_WHEELS_PORT, true); // This reverses the motor
+	pros::Controller master(CONTROLLER_MASTER);
 
 	while (true) {
-		// Steering
-		int power = master.get_analog(ANALOG_LEFT_Y);
-		int turn = master.get_analog(ANALOG_RIGHT_X);
-		int left = power + turn;
-		int right = power - turn;
-
-		bot_left_wheel.move(left);
-		top_left_wheel.move(left);
-		bot_right_wheel.move(right);
-		top_right_wheel.move(right);
-
-		arm_motor.move_velocity(master.get_analog(ANALOG_LEFT_X));
-		claw_motor.move_velocity(master.get_analog(ANALOG_RIGHT_Y));
-
-		int clawvolt = claw_motor.get_voltage();
-
-        //Ben was here3
-		// Display debug text on screeeen
-		std::stringstream sss;
-		sss << clawvolt;
-		std::string cs;
-		sss >> cs;
-		pros::lcd::set_text(4, cs);
-
-		if (master.get_digital(DIGITAL_B)) {
-			rotate_left();
-		}
-		if (master.get_digital(DIGITAL_A)) {
-			//autonomousRight();
-		}
-
-		// Arm
-		//if (master.get_digital(DIGITAL_R1)) {
-		//	arm_motor.move_velocity(127);
-		//}
-		//else if (master.get_digital(DIGITAL_R2)) {
-		//	arm_motor.move_velocity(-127);
-		//}
-		//else {
-		//	arm_motor.move_velocity(0);
-		//}
-
-		// Claw
-		// if (master.get_digital(DIGITAL_L1)) {
-		// 	claw_motor.move_velocity(127);
-		// } else if (master.get_digital(DIGITAL_L2)) {
-		// 	claw_motor.move_velocity(-127);
-		// } else {
-		// 	claw_motor.move_velocity(0);
-		// }
+		left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
+		right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
 
 		pros::delay(2);
 	}
- 
 }
