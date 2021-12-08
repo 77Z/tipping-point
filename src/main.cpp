@@ -1,7 +1,7 @@
 #include "main.h"
 #include "motor.h"
 #include <sstream>
-#include <iostream>
+#include <stdio.h>
 
 /*pros::Motor arm_motor(ARM_MOTOR_PORT);
 pros::Motor claw_motor(CLAW_MOTOR_PORT);
@@ -11,6 +11,17 @@ pros::Motor top_left_wheel(TOP_LEFT_WEEL_PORT);
 pros::Motor bot_right_wheel(BOT_RIGHT_WEEL_PORT, true); // This reverses the motor
 pros::Motor top_right_wheel(TOP_RIGHT_WEEL_PORT, true);
 */
+
+pros::Motor left_wheels(LEFT_WHEELS_PORT);
+pros::Motor right_wheels(RIGHT_WHEELS_PORT, true); // This reverses the motor
+
+pros::Motor claw(4);
+pros::Motor elevator(3);
+
+pros::ADIDigitalIn high_arm_limit('a');
+pros::ADIDigitalIn low_arm_limit('b');
+
+pros::Controller master(CONTROLLER_MASTER);
 
 /**
  * A callback function for LLEMU's center button.
@@ -36,7 +47,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "ben sucks");
+	pros::lcd::set_text(1, "Alejandro is bad");
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -112,6 +123,10 @@ void arm_down() {
 		arm_motor.move(-127);
 	}
 }*/
+
+void move_forward_1ft() {
+	left_wheels.move_absolute(360, 1200);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -206,7 +221,7 @@ void arm_down() {
 //}
 
 
-pros::ADIButton goalGrabberLimitSwitchUno('A');
+/*pros::ADIButton goalGrabberLimitSwitchUno('A');
 pros::ADIButton goalGrabberLimitSwitchDos('B');
 pros::Motor goalGrabberMotor(GOAL_GRABBER_PORT);
 
@@ -216,7 +231,7 @@ void toggleArm() {
 	while(!goalGrabberLimitSwitchUno.isPressed() || !goalGrabberLimitSwitchDos.isPressed()) {
 		goalGrabberMotor.move_voltage(12000);
 	}
-}
+}*/
 
 
 /**
@@ -234,14 +249,54 @@ void toggleArm() {
  */
 void opcontrol() {
 
-
-	pros::Motor left_wheels(LEFT_WHEELS_PORT);
-	pros::Motor right_wheels(RIGHT_WHEELS_PORT, true); // This reverses the motor
-	pros::Controller master(CONTROLLER_MASTER);
+	int isDown = 0;
 
 	while (true) {
 		left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
 		right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
+		
+		// CLAW
+		if (low_arm_limit.get_value()) {
+			claw.move(0);
+		}
+
+		if (high_arm_limit.get_value()) {
+			claw.move(0);
+		}
+
+		if (master.get_digital(DIGITAL_A)) {
+			claw.move(12000);
+		}
+
+		if (master.get_digital(DIGITAL_B)) {
+			claw.move(-12000);
+		}
+		//CLAW END
+
+		int hasPressed = 0;
+		if (master.get_digital(DIGITAL_Y)) {
+			if (!hasPressed)
+				move_forward_1ft();
+			hasPressed = 1;
+		}
+
+		if (!master.get_digital(DIGITAL_X)) {
+			elevator.move(0);
+		}
+
+		if (master.get_digital(DIGITAL_X)) {
+			elevator.move(-127);
+		}
+
+		if (!master.get_digital(DIGITAL_Y))
+			elevator.move(0);
+
+		if (master.get_digital(DIGITAL_Y))
+			elevator.move(-127);
+
+		/*if (master.get_digital(DIGITAL_Y)) {
+			printf("%i", arm_limit.get_value());
+		}*/
 
 		pros::delay(2);
 	}
