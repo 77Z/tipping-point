@@ -70,16 +70,14 @@ void disabled() {}
  */
 void competition_initialize() {}
 
-/*void move_forward() {
+void move_forward_idk() {
 	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		bot_left_wheel.move(127);
-		top_left_wheel.move(127);
-		bot_right_wheel.move(127);
-		top_right_wheel.move(127);
+	for (int i = 0; i < /*150000*/ 99996; i++) {
+		left_wheels.move(127);
+		right_wheels.move(127);
 	}
 }
-
+/*
 void move_backward() {
 	// This code is awful and i'm pretty sure it won't work
 	for (int i = 0; i < 10000; i++) {
@@ -125,7 +123,8 @@ void arm_down() {
 }*/
 
 void move_forward_1ft() {
-	left_wheels.move_absolute(360, 1200);
+	printf("Poggers\n");
+	move_forward_idk();
 }
 
 /**
@@ -247,6 +246,9 @@ void toggleArm() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+int pressed = 0;
+
 void opcontrol() {
 
 	int isDown = 0;
@@ -273,11 +275,15 @@ void opcontrol() {
 		}
 		//CLAW END
 
-		int hasPressed = 0;
-		if (master.get_digital(DIGITAL_Y)) {
-			if (!hasPressed)
-				move_forward_1ft();
-			hasPressed = 1;
+		if (master.get_digital(DIGITAL_R1)) {
+			if (pressed) return;
+
+			move_forward_1ft();
+			pressed = 1;
+		}
+
+		if (master.get_digital(DIGITAL_L1)) {
+			pressed = 0;
 		}
 
 		if (!master.get_digital(DIGITAL_X)) {
