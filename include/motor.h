@@ -1,4 +1,4 @@
 #define LEFT_WHEELS_PORT 1
 #define RIGHT_WHEELS_PORT 2
 
-#define GOAL_GRABBER_PORT 4
+//#define GOAL_GRABBER_PORT 4

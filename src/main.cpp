@@ -2,6 +2,22 @@
 #include "motor.h"
 #include <sstream>
 #include <stdio.h>
+#include "../include/okapi/api/chassis/controller/chassisController.hpp"
+#include "../include/okapi/api/chassis/controller/chassisScales.hpp"
+
+using namespace okapi;
+
+const auto WHEEL_DIAMETER = 4.25_in;
+const auto CHASSIS_WIDTH = 18_in;
+
+void autonomousLeft();
+
+std::shared_ptr<ChassisController> chassis =
+	ChassisControllerBuilder()
+	.withMotors(LEFT_WHEELS_PORT, RIGHT_WHEELS_PORT)
+	// Green gearset, 4 in wheel diam, 11.5 in wheel track
+	.withDimensions(AbstractMotor::gearset::green, {{15_in, 17.5_in}, imev5GreenTPR})
+	.build();
 
 /*pros::Motor arm_motor(ARM_MOTOR_PORT);
 pros::Motor claw_motor(CLAW_MOTOR_PORT);
@@ -22,6 +38,31 @@ pros::ADIDigitalIn high_arm_limit('a');
 pros::ADIDigitalIn low_arm_limit('b');
 
 pros::Controller master(CONTROLLER_MASTER);
+
+void competition_initialize() {}
+
+void move_distance(QLength distance) {
+	chassis->moveDistance(distance);
+}
+
+void rotate(QAngle angle) {
+	chassis->turnAngle(angle);
+}
+
+void clawUp() {
+	claw.move(12000);
+}
+
+void clawDown() {
+	claw.move(-12000);
+}
+
+void startElevator() {
+	elevator.move(-127);
+}
+void stopElevator() {
+	elevator.move(0);
+}
 
 /**
  * A callback function for LLEMU's center button.
@@ -50,6 +91,10 @@ void initialize() {
 	pros::lcd::set_text(1, "Alejandro is bad");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+
+	autonomousLeft();
+
+	//move_forward(100_in);
 }
 
 /**
@@ -68,64 +113,7 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
 
-void move_forward_idk() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < /*150000*/ 99996; i++) {
-		left_wheels.move(127);
-		right_wheels.move(127);
-	}
-}
-/*
-void move_backward() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		bot_left_wheel.move(-127);
-		top_left_wheel.move(-127);
-		bot_right_wheel.move(-127);
-		top_right_wheel.move(-127);
-	}
-}
-
-void rotate_left() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		bot_left_wheel.move(-127);
-		top_left_wheel.move(-127);
-		bot_right_wheel.move(127);
-		top_right_wheel.move(127);
-	}
-}
-
-void rotate_right() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		bot_left_wheel.move(127);
-		top_left_wheel.move(127);
-		bot_right_wheel.move(-127);
-		top_right_wheel.move(-127);
-	}
-}
-
-void arm_up() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		arm_motor.move(127);
-	}
-}
-
-void arm_down() {
-	// This code is awful and i'm pretty sure it won't work
-	for (int i = 0; i < 10000; i++) {
-		arm_motor.move(-127);
-	}
-}*/
-
-void move_forward_1ft() {
-	printf("Poggers\n");
-	move_forward_idk();
-}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -138,86 +126,34 @@ void move_forward_1ft() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-//void autonomousLeft() {
-//	for (int i = 0; i < 80; i++) {
-//		arm_up();
-//	}
-//	for (int i = 0; i < 24; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 90; i++) {
-//		rotate_right();
-//	}
-//	for (int i = 0; i < 14; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 45; i++) {
-//		arm_down();
-//	}
-//	for (int i = 0; i < 7; i++) {
-//		claw_close();
-//	}
-//	//this has the robot grab a ring
-//	for (int i = 0; i < 115; i++) {
-//		arm_up();
-//	}
-//	for (int i = 0; i < 90; i++) {
-//		rotate_left();
-//	}
-//	for (int i = 0; i < 12; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 100; i++) {
-//		arm_down();
-//	}
-//	for (int i = 0; i < 7; i++) {
-//		claw_open();
-//	}
-//	for (int i = 0; i < 12; i++) {
-//		move_backward();
-//	}
-//	//this has the robote put a ring on a goal
-//}
-//void autonomousRight() {
-//	for (int i = 0; i < 80; i++) {
-//		arm_up();
-//	}
-//	for (int i = 0; i < 42; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 90; i++) {
-//		rotate_left();
-//	}
-//	for (int i = 0; i < 7; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 45; i++) {
-//		arm_down();
-//	}
-//	for (int i = 0; i < 7; i++) {
-//		claw_close();
-//	}
-//	//this has the robot grab a ring
-//	for (int i = 0; i < 115; i++) {
-//		arm_up();
-//	}
-//	for (int i = 0; i < 90; i++) {
-//		rotate_right();
-//	}
-//	for (int i = 0; i < 18; i++) {
-//		move_forward();
-//	}
-//	for (int i = 0; i < 100; i++) {
-//		arm_down();
-//	}
-//	for (int i = 0; i < 7; i++) {
-//		claw_open();
-//	}
-//	for (int i = 0; i < 12; i++) {
-//		move_backward();
-//	}
-//	//this has the robote put a ring on a goal
-//}
+void autonomousLeft() {
+	move_distance(6_ft);
+	startElevator();
+	pros::delay(1500);
+	stopElevator();
+	move_distance(-2_ft);
+	rotate(90_deg);
+	move_distance(3_ft);
+	rotate(-90_deg);
+	move_distance(3_ft);
+	pros::delay(1000);
+	clawDown();
+	move_distance(-3_ft);
+}
+void autonomousRight() {
+	move_distance(6_ft);
+	startElevator();
+	pros::delay(1500);
+	stopElevator();
+	move_distance(-2_ft);
+	rotate(90_deg);
+	move_distance(3_ft);
+	rotate(-90_deg);
+	move_distance(3_ft);
+	pros::delay(2000);
+	clawDown();
+	move_distance(-3_ft);
+}
 
 
 /*pros::ADIButton goalGrabberLimitSwitchUno('A');
@@ -278,20 +214,24 @@ void opcontrol() {
 		if (master.get_digital(DIGITAL_R1)) {
 			if (pressed) return;
 
-			move_forward_1ft();
+			//move_forward(10_in);
 			pressed = 1;
+		}
+
+		if (!master.get_digital(DIGITAL_R1)) {
+			pressed = 0;
 		}
 
 		if (master.get_digital(DIGITAL_L1)) {
 			pressed = 0;
 		}
 
-		if (!master.get_digital(DIGITAL_X)) {
-			elevator.move(0);
-		}
-
 		if (master.get_digital(DIGITAL_X)) {
 			elevator.move(-127);
+		}
+
+		if (!master.get_digital(DIGITAL_X)) {
+			elevator.move(0);
 		}
 
 		if (!master.get_digital(DIGITAL_Y))
