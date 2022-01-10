@@ -2,6 +2,7 @@
 #include "motor.h"
 #include <sstream>
 #include <stdio.h>
+#include "settings.h"
 #include "../include/okapi/api/chassis/controller/chassisController.hpp"
 #include "../include/okapi/api/chassis/controller/chassisScales.hpp"
 
@@ -124,7 +125,9 @@ void disabled() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomousLeft() {
+
+void autonomous() {
+#ifdef IS_LEFT
 	move_distance(6_ft);
 	startElevator();
 	pros::delay(1500);
@@ -137,8 +140,7 @@ void autonomousLeft() {
 	pros::delay(1000);
 	clawDown();
 	move_distance(-3_ft);
-}
-void autonomousRight() {
+#else
 	move_distance(6_ft);
 	startElevator();
 	pros::delay(1500);
@@ -151,8 +153,8 @@ void autonomousRight() {
 	pros::delay(2000);
 	clawDown();
 	move_distance(-3_ft);
+#endif
 }
-
 
 /*pros::ADIButton goalGrabberLimitSwitchUno('A');
 pros::ADIButton goalGrabberLimitSwitchDos('B');
