@@ -2,6 +2,8 @@
 #include "motor.h"
 #include <sstream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "settings.h"
 #include "../include/okapi/api/chassis/controller/chassisController.hpp"
 #include "../include/okapi/api/chassis/controller/chassisScales.hpp"
@@ -187,10 +189,12 @@ int pressed = 0;
 
 void opcontrol() {
 
+
+
 	int isDown = 0;
 
 	while (true) {
-		left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
+		printf("%i", left_wheels.get_voltage());	left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
 		right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
 		
 		// CLAW
