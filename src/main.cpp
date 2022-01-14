@@ -33,6 +33,8 @@ pros::Motor top_right_wheel(TOP_RIGHT_WEEL_PORT, true);
 
 pros::Motor left_wheels(LEFT_WHEELS_PORT);
 pros::Motor right_wheels(RIGHT_WHEELS_PORT, true); // This reverses the motor
+pros::Motor left_wheels_top(5);
+pros::Motor right_wheels_top(6, true);
 
 pros::Motor claw(4);
 pros::Motor elevator(3);
@@ -194,8 +196,11 @@ void opcontrol() {
 	int isDown = 0;
 
 	while (true) {
-		printf("%i", left_wheels.get_voltage());	left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
+		left_wheels.move(master.get_analog(ANALOG_LEFT_Y));
 		right_wheels.move(master.get_analog(ANALOG_RIGHT_Y));
+		
+		left_wheels_top.move(master.get_analog(ANALOG_LEFT_Y));
+		right_wheels_top.move(master.get_analog(ANALOG_RIGHT_Y));
 		
 		// CLAW
 		if (low_arm_limit.get_value()) {
